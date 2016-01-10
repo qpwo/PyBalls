@@ -1,20 +1,14 @@
-# todo:
-#  X-finalize code and commit
-#  X-add in full map feature
-#    X-ten by ten grid of squares, randomly filled with stuff. edges either loop
-#     over or bounce off
-#  X-max velocity on balls (1 grid per second?)
-#  X-balls attracted to you if in same square
-#   X-make total velocity constant instead of componentwise
+#TODO:
+# -add button to switch off gravity
 import pygame, sys, pdb
 from pygame.locals import *
-from random import randint, choice
+from random import randint
 from math import sqrt
 
-WIDTH, HEIGHT = 640, 480
-GWIDTH, GHEIGHT = 10, 12
+WIDTH, HEIGHT = 1000,700
+GWIDTH, GHEIGHT = 5, 5
 UWIDTH, UHEIGHT = WIDTH * GWIDTH, HEIGHT * GHEIGHT
-MAXV = min(WIDTH, HEIGHT) / 30.0
+MAXSPEED = min(WIDTH, HEIGHT) / 30.0
 
 def makeColor():
     notUsing = randint(0,2)
@@ -27,14 +21,11 @@ def makeColor():
 
 class Ball:
     def __init__(self, r, (x, y)):
-        #self.color = (randint(1, 255), randint(1, 255), randint(1, 255))
         self.color = makeColor()
         self.r = float(r)
         self.xv, self.yv = 0.0, 0.0
         self.x, self.y = float(x), float(y)
-        x, y = int(x), int(y)
-        self.gx, self.gy = x // WIDTH, y // HEIGHT
-        self.dx, self.dy = x % WIDTH, y % HEIGHT
+        self.move()
     def __repr__(self):
         return "<Ball. color: {}, r: {}, x: {}, y: {}, xv: {}, yv: {}>".format(
                 self.color, self.r, self.x, self.y, self.xv, self.yv)
@@ -47,10 +38,10 @@ class Ball:
     def accelerate(self, (xa, ya)):
         self.xv += xa
         self.yv += ya
-        vSum = abs(self.xv) + abs(self.yv)
-        if vSum > MAXV:
-            self.xv = self.xv / vSum * MAXV
-            self.yv = self.yv / vSum * MAXV
+        speed = sqrt(self.xv**2 + self.yv**2)
+        if speed > MAXSPEED:
+            self.xv = (self.xv / speed) * MAXSPEED
+            self.yv = (self.yv / speed) * MAXSPEED
 
 myBall = Ball(min(WIDTH, HEIGHT)/8.0, (WIDTH//2, HEIGHT//2))
 #worldBalls = {Ball(10, (40, 50)), Ball(25, (900, 200)), Ball(15, (-1000, 40))} 
@@ -71,7 +62,7 @@ def attraction(ball1, ball2):
     dist = sqrt(xDist**2 + yDist**2)
     areaRatio = ball1.r**2 / ball2.r**2
     xdir, ydir = xDist/dist, yDist/dist
-    magnitude = 1000 * areaRatio / dist**2
+    magnitude = 10000 * areaRatio / dist**2
     return (xdir * magnitude, ydir * magnitude)
 
 pygame.init()
