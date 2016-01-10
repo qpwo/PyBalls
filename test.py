@@ -1,5 +1,5 @@
 #TODO:
-# -add button to switch off gravity
+# X-add button to switch off gravity
 import pygame, sys, pdb
 from pygame.locals import *
 from random import randint
@@ -85,21 +85,27 @@ while True:
                 pdb.set_trace()
 
     windowSurfaceObj.fill((0,0,0))
-    for ball in worldBalls:
-        if (ball.gx, ball.gy) == (myBall.gx, myBall.gy):
-            ball.accelerate(attraction(myBall, ball))
-        ball.move()
-        drawBall(ball)
 
     keyValues = pygame.key.get_pressed()
-    # get wasd keys
+
     if keyValues[K_w]: myBall.accelerate((0,-1))
     if keyValues[K_s]: myBall.accelerate((0,1))
     if keyValues[K_a]: myBall.accelerate((-1,0))
     if keyValues[K_d]: myBall.accelerate((1,0))
 
     myBall.move()
+
+    if keyValues[K_n]: myBall.r = max(myBall.r - 1, 1)
+    if keyValues[K_m]: myBall.r += 1
+
     drawBall(myBall)
+
+    for ball in worldBalls:
+        if not keyValues[K_g]:
+            if (ball.gx, ball.gy) == (myBall.gx, myBall.gy):
+                    ball.accelerate(attraction(myBall, ball))
+        ball.move()
+        drawBall(ball)
 
     msg = "{}, {}".format(myBall.gx, myBall.gy)
     msgSurfaceObj = fontObj.render(msg, False, (100,100,100))
