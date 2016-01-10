@@ -5,16 +5,16 @@
 #     over or bounce off
 #  X-max velocity on balls (1 grid per second?)
 #  X-balls attracted to you if in same square
-#   -make total velocity constant instead of componentwise
+#   X-make total velocity constant instead of componentwise
 import pygame, sys, pdb
 from pygame.locals import *
 from random import randint
 from math import sqrt
 
-WIDTH, HEIGHT = 640, 480 # displaywidth, displayheight
-GWIDTH, GHEIGHT = 10, 12 # gridwidth, gridheight
-UWIDTH, UHEIGHT = WIDTH * GWIDTH, HEIGHT * GHEIGHT #universewidth,universeheight
-MAXV = min(WIDTH, HEIGHT) / 30.0 # maximum allowed velocity for balls
+WIDTH, HEIGHT = 640, 480
+GWIDTH, GHEIGHT = 10, 12
+UWIDTH, UHEIGHT = WIDTH * GWIDTH, HEIGHT * GHEIGHT
+MAXV = min(WIDTH, HEIGHT) / 30.0
 
 def sign(number):
     if number < 0: return -1
@@ -23,12 +23,12 @@ def sign(number):
 class Ball:
     def __init__(self, r, (x, y)):
         self.color = (randint(1, 255), randint(1, 255), randint(1, 255))
-        self.r = float(r) # radius
-        self.xv, self.yv = 0.0, 0.0 # x velocity, y velocity
-        self.x, self.y = float(x), float(y) # x & y universe coordinates
+        self.r = float(r)
+        self.xv, self.yv = 0.0, 0.0
+        self.x, self.y = float(x), float(y)
         x, y = int(x), int(y)
-        self.gx, self.gy = x // WIDTH, y // HEIGHT # location in grid
-        self.dx, self.dy = x % WIDTH, y % HEIGHT # location on display (omit?)
+        self.gx, self.gy = x // WIDTH, y // HEIGHT
+        self.dx, self.dy = x % WIDTH, y % HEIGHT
     def __repr__(self):
         return "<Ball. color: {}, r: {}, x: {}, y: {}, xv: {}, yv: {}>".format(
                 self.color, self.r, self.x, self.y, self.xv, self.yv)
@@ -41,8 +41,10 @@ class Ball:
     def accelerate(self, (xa, ya)):
         self.xv += xa
         self.yv += ya
-        if abs(self.xv) > MAXV: self.xv = sign(self.xv) * MAXV
-        if abs(self.yv) > MAXV: self.yv = sign(self.yv) * MAXV
+        vSum = abs(self.xv) + abs(self.yv)
+        if vSum > MAXV:
+            self.xv = self.xv / vSum * MAXV
+            self.yv = self.yv / vSum * MAXV
 
 myBall = Ball(min(WIDTH, HEIGHT)/8.0, (WIDTH//2, HEIGHT//2))
 #worldBalls = {Ball(10, (40, 50)), Ball(25, (900, 200)), Ball(15, (-1000, 40))} 
