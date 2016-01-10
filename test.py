@@ -8,7 +8,7 @@
 #   X-make total velocity constant instead of componentwise
 import pygame, sys, pdb
 from pygame.locals import *
-from random import randint
+from random import randint, choice
 from math import sqrt
 
 WIDTH, HEIGHT = 640, 480
@@ -16,13 +16,19 @@ GWIDTH, GHEIGHT = 10, 12
 UWIDTH, UHEIGHT = WIDTH * GWIDTH, HEIGHT * GHEIGHT
 MAXV = min(WIDTH, HEIGHT) / 30.0
 
-def sign(number):
-    if number < 0: return -1
-    return 1
+def makeColor():
+    notUsing = randint(0,2)
+    split = randint(0,255)
+    color = [0,0,0]
+    color[(notUsing - 1) % 3] = split
+    color[(notUsing + 1) % 3] = 255 - split
+    return tuple(color)
+
 
 class Ball:
     def __init__(self, r, (x, y)):
-        self.color = (randint(1, 255), randint(1, 255), randint(1, 255))
+        #self.color = (randint(1, 255), randint(1, 255), randint(1, 255))
+        self.color = makeColor()
         self.r = float(r)
         self.xv, self.yv = 0.0, 0.0
         self.x, self.y = float(x), float(y)
