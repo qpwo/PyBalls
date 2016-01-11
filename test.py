@@ -1,12 +1,10 @@
-#TODO:
-# X-add button to switch off gravity
 import pygame, sys, pdb
 from pygame.locals import *
 from random import randint
 from math import sqrt
 
-WIDTH, HEIGHT = 1000,700
-GWIDTH, GHEIGHT = 5, 5
+WIDTH, HEIGHT = 640, 480
+GWIDTH, GHEIGHT = 10,10
 UWIDTH, UHEIGHT = WIDTH * GWIDTH, HEIGHT * GHEIGHT
 MAXSPEED = min(WIDTH, HEIGHT) / 30.0
 
@@ -100,12 +98,16 @@ while True:
 
     drawBall(myBall)
 
-    for ball in worldBalls:
-        if not keyValues[K_g]:
-            if (ball.gx, ball.gy) == (myBall.gx, myBall.gy):
-                    ball.accelerate(attraction(myBall, ball))
-        ball.move()
-        drawBall(ball)
+    for ball1 in worldBalls:
+        #if not keyValues[K_g]:
+        #if (ball.gx, ball.gy) == (myBall.gx, myBall.gy):
+                #ball.accelerate(attraction(myBall, ball))
+        myBall.accelerate(attraction(ball1,myBall))
+        for ball2 in worldBalls - {ball1}:
+            if (ball1.gx, ball1.gy) == (ball2.gx, ball2.gy):
+                ball2.accelerate(attraction(ball1, ball2))
+        ball1.move()
+        drawBall(ball1)
 
     msg = "{}, {}".format(myBall.gx, myBall.gy)
     msgSurfaceObj = fontObj.render(msg, False, (100,100,100))
