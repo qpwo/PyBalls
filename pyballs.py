@@ -4,7 +4,7 @@ from random import randint
 from math import sqrt
 
 WIDTH, HEIGHT = 640, 480
-GWIDTH, GHEIGHT = 10,10
+GWIDTH, GHEIGHT = 7, 7
 UWIDTH, UHEIGHT = WIDTH * GWIDTH, HEIGHT * GHEIGHT
 MAXSPEED = min(WIDTH, HEIGHT) / 30.0
 
