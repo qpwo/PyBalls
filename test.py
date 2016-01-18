@@ -44,7 +44,7 @@ class Ball:
 myBall = Ball(min(WIDTH, HEIGHT)/8.0, (WIDTH//2, HEIGHT//2))
 #worldBalls = {Ball(10, (40, 50)), Ball(25, (900, 200)), Ball(15, (-1000, 40))} 
 worldBalls = {Ball(randint(20,40), (randint(0,UWIDTH), randint(0,UHEIGHT)))
-              for __ in xrange(randint(100, 200))}
+              for __ in xrange(randint(100, 200))} | {myBall}
 for ball in worldBalls:
     ball.xv = randint(-10,10)
     ball.yv = randint(-10,10)
@@ -60,14 +60,14 @@ def attraction(ball1, ball2):
     dist = sqrt(xDist**2 + yDist**2)
     areaRatio = ball1.r**2 / ball2.r**2
     xdir, ydir = xDist/dist, yDist/dist
-    magnitude = 10000 * areaRatio / dist**2
+    magnitude = 1000 * areaRatio / dist**2
     return (xdir * magnitude, ydir * magnitude)
 
 pygame.init()
 fpsClock = pygame.time.Clock()
 
 windowSurfaceObj = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Physics Fun")
+pygame.display.set_caption("PyBalls")
 
 fontObj = pygame.font.Font("freesansbold.ttf", 32)
 msg = "initial message"
@@ -91,23 +91,16 @@ while True:
     if keyValues[K_a]: myBall.accelerate((-1,0))
     if keyValues[K_d]: myBall.accelerate((1,0))
 
-    myBall.move()
-
     if keyValues[K_n]: myBall.r = max(myBall.r - 1, 1)
     if keyValues[K_m]: myBall.r += 1
 
-    drawBall(myBall)
-
-    for ball1 in worldBalls:
-        #if not keyValues[K_g]:
-        #if (ball.gx, ball.gy) == (myBall.gx, myBall.gy):
-                #ball.accelerate(attraction(myBall, ball))
-        myBall.accelerate(attraction(ball1,myBall))
-        for ball2 in worldBalls - {ball1}:
-            if (ball1.gx, ball1.gy) == (ball2.gx, ball2.gy):
-                ball2.accelerate(attraction(ball1, ball2))
-        ball1.move()
-        drawBall(ball1)
+    if not keyValues[K_g]:
+        for ball1 in worldBalls:
+            for ball2 in worldBalls - {ball1}:
+                if  (ball2.gx, ball2.gy) == (ball1.gx, ball1.gy):
+                    ball2.accelerate(attraction(ball1, ball2))
+            ball1.move()
+            drawBall(ball1)
 
     msg = "{}, {}".format(myBall.gx, myBall.gy)
     msgSurfaceObj = fontObj.render(msg, False, (100,100,100))
